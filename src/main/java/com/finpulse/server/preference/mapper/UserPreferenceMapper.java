@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class UserPreferenceMapper {
 
   public UserPreference toDomain(UserPreferenceRequest request) {
-    return UserPreference.create(
+    return UserPreference.createPreference(
         request.getCustomerId(),
         request.getTheme(),
         request.getLanguage(),
@@ -17,7 +17,7 @@ public class UserPreferenceMapper {
   }
 
   public void apply(UserPreferenceRequest request, UserPreference preference) {
-    preference.update(
+    preference.updatePreference(
         request.getCustomerId(),
         request.getTheme(),
         request.getLanguage(),
@@ -26,12 +26,12 @@ public class UserPreferenceMapper {
 
   public UserPreferenceResponse toResponse(UserPreference preference) {
     return UserPreferenceResponse.builder()
-        .preferenceId(preference.preferenceId())
-        .customerId(preference.customerId())
-        .theme(preference.theme())
-        .language(preference.language())
-        .notificationsEnabled(preference.notificationsEnabled())
-        .updatedAt(preference.updatedAt())
+        .preferenceId(preference.getId().getValue())
+        .customerId(preference.getCustomerId().getValue())
+        .theme(preference.getTheme())
+        .language(preference.getLanguage())
+        .notificationsEnabled(preference.isNotificationsEnabled())
+        .updatedAt(preference.getUpdatedAt())
         .build();
   }
 }

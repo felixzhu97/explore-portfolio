@@ -1,38 +1,50 @@
 package com.finpulse.server.auth.domain.model;
 
-import java.time.Instant;
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import com.finpulse.server.customer.domain.model.CustomerId;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class UserCredential {
-  @NonNull private final UUID credentialId;
-  @NonNull private final UUID customerId;
-  @NonNull private final String email;
-  @NonNull private String passwordHash;
-  @NonNull private final Instant createdAt;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class UserCredential extends AbstractEntity<CredentialId> {
 
-  public static UserCredential create(UUID customerId, String email, String passwordHash) {
-    return new UserCredential(UUID.randomUUID(), customerId, email, passwordHash, Instant.now());
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "customer_id", nullable = false))
+  private CustomerId customerId;
+
+  @NotBlank private String email;
+
+  @NotBlank private String passwordHash;
+
+  private UserCredential(
+      CredentialId id, CustomerId customerId, String email, String passwordHash) {
+    super(id);
+    this.customerId = Objects.requireNonNull(customerId, "customerId cannot be null");
+    this.email = Objects.requireNonNull(email, "email cannot be null");
+    this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash cannot be null");
   }
 
-  public static UserCredential rehydrate(
-      UUID credentialId, UUID customerId, String email, String passwordHash, Instant createdAt) {
+  public static UserCredential createCredential(
+      UUID customerId, String email, String passwordHash) {
     return new UserCredential(
-        credentialId,
-        customerId,
-        email,
-        passwordHash,
-        createdAt == null ? Instant.now() : createdAt);
+        CredentialId.generateId(), CustomerId.parseId(customerId), email, passwordHash);
   }
 
-  public void updatePasswordHash(@NonNull String passwordHash) {
-    this.passwordHash = passwordHash;
+  public void updatePasswordHash(String passwordHash) {
+    this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash cannot be null");
   }
 }

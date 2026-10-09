@@ -2,7 +2,8 @@ package com.finpulse.server.auth.service;
 
 import com.finpulse.server.auth.domain.model.Session;
 import com.finpulse.server.auth.domain.model.UserCredential;
-import com.finpulse.server.auth.domain.repository.AuthRepository;
+import com.finpulse.server.auth.domain.repository.SessionRepository;
+import com.finpulse.server.auth.domain.repository.UserCredentialRepository;
 import com.finpulse.server.auth.dto.ChangePasswordRequest;
 import com.finpulse.server.auth.dto.LoginRequest;
 import com.finpulse.server.auth.dto.RegisterRequest;
@@ -27,7 +28,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthService {
   private static final int SESSION_DAYS = 7;
 
-  private final AuthRepository authRepository;
+  private final UserCredentialRepository credentialRepository;
+  private final SessionRepository sessionRepository;
   private final CustomerRepository customerRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final SecureRandom secureRandom = new SecureRandom();
@@ -37,24 +39,28 @@ public class AuthService {
   public AuthResult login(LoginRequest request) {
     String email = normalizeEmail(request.getEmail());
     UserCredential credential =
-        authRepository.findCredentialByEmail(email).orElseThrow(this::invalidCredentials);
-    if (!passwordEncoder.matches(request.getPassword(), credential.passwordHash())) {
+        credentialRepository.findByEmail(email).orElseThrow(this::invalidCredentials);
+    if (!passwordEncoder.matches(request.getPassword(), credential.getPasswordHash())) {
       throw invalidCredentials();
     }
     Customer customer =
-        customerRepository.findById(credential.customerId()).orElseThrow(this::invalidCredentials);
-    return new AuthResult(createSessionToken(customer.customerId()), customer);
+        customerRepository
+            .findById(credential.getCustomerId())
+            .orElseThrow(this::invalidCredentials);
+    return new AuthResult(createSessionToken(customer.getId().getValue()), customer);
   }
 
   public AuthResult register(RegisterRequest request) {
     String email = normalizeEmail(request.getEmail());
-    if (authRepository.findCredentialByEmail(email).isPresent()) {
+    if (credentialRepository.findByEmail(email).isPresent()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already registered");
     }
-    Customer customer = customerRepository.save(Customer.create(request.getName().trim(), email));
-    authRepository.saveCredential(
-        UserCredential.create(customer.customerId(), email, passwordEncoder.encode(request.getPassword())));
-    return new AuthResult(createSessionToken(customer.customerId()), customer);
+    Customer customer =
+        customerRepository.save(Customer.createCustomer(request.getName().trim(), email));
+    credentialRepository.save(
+        UserCredential.createCredential(
+            customer.getId().getValue(), email, passwordEncoder.encode(request.getPassword())));
+    return new AuthResult(createSessionToken(customer.getId().getValue()), customer);
   }
 
   @Transactional(readOnly = true)
@@ -63,26 +69,26 @@ public class AuthService {
   }
 
   public void logout(String token) {
-    authRepository.deleteSessionByToken(token);
+    sessionRepository.deleteByToken(token);
   }
 
   public void changePassword(String token, ChangePasswordRequest request) {
     Customer customer = customerForToken(token);
     UserCredential credential =
-        authRepository
-            .findCredentialByCustomerId(customer.customerId())
+        credentialRepository
+            .findByCustomerId(customer.getId())
             .orElseThrow(this::invalidCredentials);
-    if (!passwordEncoder.matches(request.getCurrentPassword(), credential.passwordHash())) {
+    if (!passwordEncoder.matches(request.getCurrentPassword(), credential.getPasswordHash())) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Current password is incorrect");
     }
     credential.updatePasswordHash(passwordEncoder.encode(request.getNewPassword()));
-    authRepository.saveCredential(credential);
+    credentialRepository.save(credential);
   }
 
   private Customer customerForToken(String token) {
     Session session =
-        authRepository
-            .findSessionByToken(token)
+        sessionRepository
+            .findByToken(token)
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
@@ -91,7 +97,7 @@ public class AuthService {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired session");
     }
     return customerRepository
-        .findById(session.customerId())
+        .findById(session.getCustomerId())
         .orElseThrow(
             () ->
                 new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired session"));
@@ -102,7 +108,7 @@ public class AuthService {
     secureRandom.nextBytes(bytes);
     String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     Instant expires = Instant.now().plus(SESSION_DAYS, ChronoUnit.DAYS);
-    authRepository.saveSession(Session.create(customerId, token, expires));
+    sessionRepository.save(Session.createSession(customerId, token, expires));
     return token;
   }
 

@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 public class SettlementEntity {
   @Id
-  @Column(name = "settlement_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID settlementId;
   @Column(name = "trade_id", nullable = false)

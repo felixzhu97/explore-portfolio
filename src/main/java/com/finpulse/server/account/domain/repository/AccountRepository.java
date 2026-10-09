@@ -1,18 +1,20 @@
 package com.finpulse.server.account.domain.repository;
 
 import com.finpulse.server.account.domain.model.Account;
+import com.finpulse.server.account.domain.model.AccountId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface AccountRepository {
-  List<Account> findAll(int limit, int offset);
+public interface AccountRepository extends Repository<Account, AccountId> {
 
-  Optional<Account> findById(UUID accountId);
+  List<Account> findAllByOrderByCreatedAtDesc();
 
-  boolean existsById(UUID accountId);
+  Optional<Account> findById(AccountId id);
+
+  boolean existsById(AccountId id);
 
   Account save(Account account);
 
-  void deleteById(UUID accountId);
+  void deleteById(AccountId id);
 }

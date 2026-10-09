@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder
 public class InstrumentEntity {
   @Id
-  @Column(name = "instrument_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID instrumentId;
   @Column(name = "symbol", nullable = false)

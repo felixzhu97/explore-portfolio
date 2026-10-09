@@ -1,40 +1,48 @@
 package com.finpulse.server.customer.domain.model;
 
-import java.time.Instant;
-import java.util.UUID;
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Customer {
-  @NonNull private final UUID customerId;
-  @NonNull private String name;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class Customer extends AbstractEntity<CustomerId> {
+
+  @NotBlank private String name;
+
   private String email;
-  private String kycStatus;
-  @NonNull private final Instant createdAt;
 
-  public static Customer create(String name, String email) {
-    return create(name, email, null);
-  }
+  @Enumerated(EnumType.STRING)
+  private KycStatus kycStatus;
 
-  public static Customer create(String name, String email, String kycStatus) {
-    return new Customer(UUID.randomUUID(), name, email, kycStatus, Instant.now());
-  }
-
-  public static Customer rehydrate(
-      UUID customerId, String name, String email, String kycStatus, Instant createdAt) {
-    return new Customer(
-        customerId, name, email, kycStatus, createdAt == null ? Instant.now() : createdAt);
-  }
-
-  public void update(@NonNull String name, String email, String kycStatus) {
-    this.name = name;
+  private Customer(CustomerId id, String name, String email, KycStatus kycStatus) {
+    super(id);
+    this.name = Objects.requireNonNull(name, "name cannot be null");
     this.email = email;
     this.kycStatus = kycStatus;
+  }
+
+  public static Customer createCustomer(String name, String email) {
+    return createCustomer(name, email, null);
+  }
+
+  public static Customer createCustomer(String name, String email, String kycStatus) {
+    return new Customer(
+        CustomerId.generateId(), name, email, KycStatus.parseStatus(kycStatus));
+  }
+
+  public void updateProfile(String name, String email, String kycStatus) {
+    this.name = Objects.requireNonNull(name, "name cannot be null");
+    this.email = email;
+    this.kycStatus = KycStatus.parseStatus(kycStatus);
   }
 }

@@ -6,7 +6,7 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 /**
  * Maps {@code FooEntity} → table {@code foo} without {@code @Table}.
- * {@code TradeOrderEntity} maps to {@code orders} to match Liquibase.
+ * Domain classes {@code Order} / {@code TradeOrder} map to {@code orders}.
  */
 public class EntityTableNamingStrategy extends CamelCaseToUnderscoresNamingStrategy {
 
@@ -16,7 +16,7 @@ public class EntityTableNamingStrategy extends CamelCaseToUnderscoresNamingStrat
     if (text.endsWith("Entity")) {
       text = text.substring(0, text.length() - "Entity".length());
     }
-    if ("TradeOrder".equals(text)) {
+    if ("TradeOrder".equals(text) || "Order".equals(text)) {
       text = "Orders";
     }
     return super.toPhysicalTableName(Identifier.toIdentifier(text), jdbcEnvironment);

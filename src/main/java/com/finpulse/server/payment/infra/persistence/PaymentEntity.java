@@ -22,7 +22,7 @@ import lombok.Setter;
 @Builder
 public class PaymentEntity {
   @Id
-  @Column(name = "payment_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID paymentId;
   @Column(name = "account_id", nullable = false)
