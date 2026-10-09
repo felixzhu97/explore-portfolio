@@ -46,6 +46,28 @@ This document defines the project **Ubiquitous Language**. English terms are the
 | Preference | 偏好 | `preference` | all | `/api/v1/user-preferences` | User preference |
 | Blockchain | 区块链演示 | `blockchain` | mobile | blockchain routes | Demo wallet / Sepolia |
 | Analytics | 分析 | Python (`apps/server-python`) | admin / portal | `/api/v1` analytics / risk / forecast | VaR, events, MLflow |
+| Common | 横切 | `common` | — | — | Shared domain kernel bases and value objects |
+
+---
+
+## 2.5 Domain Kernel | 领域内核
+
+Shared persistence and aggregate bases under `com.finpulse.server.common.domain.model`. Feature modules inherit these types instead of duplicating JPA mapping.
+
+| Preferred Term (English) | 中文 | Definition | Type | Code Mapping | Notes |
+| ------------------------ | ---- | ---------- | ---- | ------------ | ----- |
+| Entity ID | 实体标识 | Typed UUID identity of one aggregate, used as `@EmbeddedId` | Value Object | `@Embeddable` Lombok classes such as `PortfolioId` with one `UUID value` | `generateId` / `parseId` / `createId`; ids of different aggregates never compare equal |
+| Abstract Embeddable | 值对象基类 | Layer supertype of value objects embedded in entities | Mapped Superclass | `AbstractEmbeddable` | Carries `Serializable`, which embedded ids require |
+| Abstract Immutable | 不可变实体基类 | Root of every entity: assigned id and creation time | Mapped Superclass | `AbstractImmutable<IdT>` | Hibernate stamps `createdAt`; implements Spring Data `Persistable` |
+| Abstract Entity | 可变实体基类 | Immutable base plus update time and optimistic `@Version` | Mapped Superclass | `AbstractEntity<IdT>` | Hibernate stamps `updatedAt` when a dirty row is flushed |
+| Money | 金额 | Amount with currency | Value Object | `Money` | Embedded amount + `CurrencyCode` |
+| Currency Code | 币种 | ISO-style currency code | Value Object | `CurrencyCode` | Embedded string code |
+| Symbol | 代码 | Exchange ticker / instrument symbol | Value Object | `Symbol` | Embedded string value |
+| Quantity | 数量 | Decimal holding or order quantity | Value Object | `Quantity` | Embedded `BigDecimal` |
+
+**Layer packages (per feature module):** `controller` → `service` → `domain` ← `infra` (+ `mapper` when needed).
+
+**Domain packages:** `domain.model` holds entities, aggregate roots, value objects, and enums; `domain.repository` holds repository interfaces. JPA-backed repositories extend Spring Data `Repository<T, ID>` and are implemented by Spring Data. There is no `domain.vo`, `domain.service`, or `domain.exception` package.
 
 ---
 
@@ -89,3 +111,5 @@ This document defines the project **Ubiquitous Language**. English terms are the
 | Watchlist | Favorites list |
 | Instrument | Stock (when the type may not be equity) |
 | Customer | User (when meaning the domain Customer) |
+| Order | TradeOrder (as the preferred Glossary term; Java class is `Order`) |
+| Option | OptionContract (as the entity name) |
