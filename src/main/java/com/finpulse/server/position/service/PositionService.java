@@ -1,6 +1,7 @@
 package com.finpulse.server.position.service;
 
 import com.finpulse.server.position.domain.model.Position;
+import com.finpulse.server.position.domain.model.PositionId;
 import com.finpulse.server.position.domain.repository.PositionRepository;
 import com.finpulse.server.position.dto.PositionRequest;
 import com.finpulse.server.position.mapper.PositionMapper;
@@ -20,20 +21,38 @@ public class PositionService {
   private final PositionMapper mapper;
 
   @Transactional(readOnly = true)
-  public List<Position> list(int limit, int offset) { return repository.findAll(limit, offset); }
+  public List<Position> list(int limit, int offset) {
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
+  }
 
   @Transactional(readOnly = true)
   public Position getById(UUID id) {
-    return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Position not found"));
+    return repository
+        .findById(PositionId.parseId(id))
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Position not found"));
   }
 
-  public Position create(PositionRequest request) { return repository.save(mapper.toDomain(request)); }
-  public List<Position> createBatch(List<PositionRequest> requests) { return requests.stream().map(this::create).toList(); }
-  public Position update(UUID id, PositionRequest request) {
-    Position existing = getById(id); mapper.apply(request, existing); return repository.save(existing);
+  public Position create(PositionRequest request) {
+    return repository.save(mapper.toDomain(request));
   }
+
+  public List<Position> createBatch(List<PositionRequest> requests) {
+    return requests.stream().map(this::create).toList();
+  }
+
+  public Position update(UUID id, PositionRequest request) {
+    Position existing = getById(id);
+    mapper.apply(request, existing);
+    return repository.save(existing);
+  }
+
   public void delete(UUID id) {
-    if (!repository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Position not found");
-    repository.deleteById(id);
+    PositionId positionId = PositionId.parseId(id);
+    if (!repository.existsById(positionId)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Position not found");
+    }
+    repository.deleteById(positionId);
   }
 }

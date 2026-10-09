@@ -1,6 +1,7 @@
 package com.finpulse.server.portfolio.service;
 
 import com.finpulse.server.portfolio.domain.model.Portfolio;
+import com.finpulse.server.portfolio.domain.model.PortfolioId;
 import com.finpulse.server.portfolio.domain.repository.PortfolioRepository;
 import com.finpulse.server.portfolio.dto.PortfolioRequest;
 import com.finpulse.server.portfolio.mapper.PortfolioMapper;
@@ -20,20 +21,39 @@ public class PortfolioService {
   private final PortfolioMapper mapper;
 
   @Transactional(readOnly = true)
-  public List<Portfolio> list(int limit, int offset) { return repository.findAll(limit, offset); }
+  public List<Portfolio> list(int limit, int offset) {
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
+  }
 
   @Transactional(readOnly = true)
   public Portfolio getById(UUID id) {
-    return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found"));
+    return repository
+        .findById(PortfolioId.parseId(id))
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found"));
   }
 
-  public Portfolio create(PortfolioRequest request) { return repository.save(mapper.toDomain(request)); }
-  public List<Portfolio> createBatch(List<PortfolioRequest> requests) { return requests.stream().map(this::create).toList(); }
-  public Portfolio update(UUID id, PortfolioRequest request) {
-    Portfolio existing = getById(id); mapper.apply(request, existing); return repository.save(existing);
+  public Portfolio create(PortfolioRequest request) {
+    return repository.save(mapper.toDomain(request));
   }
+
+  public List<Portfolio> createBatch(List<PortfolioRequest> requests) {
+    return requests.stream().map(this::create).toList();
+  }
+
+  public Portfolio update(UUID id, PortfolioRequest request) {
+    Portfolio existing = getById(id);
+    mapper.apply(request, existing);
+    return repository.save(existing);
+  }
+
   public void delete(UUID id) {
-    if (!repository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found");
-    repository.deleteById(id);
+    PortfolioId portfolioId = PortfolioId.parseId(id);
+    if (!repository.existsById(portfolioId)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found");
+    }
+    repository.deleteById(portfolioId);
   }
 }
