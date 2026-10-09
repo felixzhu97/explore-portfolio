@@ -1,14 +1,21 @@
 package com.finpulse.server.cashtransaction.domain.repository;
 
 import com.finpulse.server.cashtransaction.domain.model.CashTransaction;
+import com.finpulse.server.cashtransaction.domain.model.CashTransactionId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface CashTransactionRepository {
-  List<CashTransaction> findAll(int limit, int offset);
-  Optional<CashTransaction> findById(UUID id);
-  boolean existsById(UUID id);
-  CashTransaction save(CashTransaction entity);
-  void deleteById(UUID id);
+public interface CashTransactionRepository
+    extends Repository<CashTransaction, CashTransactionId> {
+
+  List<CashTransaction> findAllByOrderByCreatedAtDesc();
+
+  Optional<CashTransaction> findById(CashTransactionId id);
+
+  boolean existsById(CashTransactionId id);
+
+  CashTransaction save(CashTransaction cashTransaction);
+
+  void deleteById(CashTransactionId id);
 }

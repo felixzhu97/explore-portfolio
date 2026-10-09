@@ -1,24 +1,42 @@
 package com.finpulse.server.order.mapper;
 
-import com.finpulse.server.order.domain.model.TradeOrder;
+import com.finpulse.server.order.domain.model.Order;
 import com.finpulse.server.order.dto.TradeOrderRequest;
 import com.finpulse.server.order.dto.TradeOrderResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TradeOrderMapper {
-  public TradeOrder toDomain(TradeOrderRequest request) { return TradeOrder.create(request.getAccountId(), request.getInstrumentId(), request.getSide(), request.getQuantity(), request.getOrderType(), request.getStatus()); }
-  public void apply(TradeOrderRequest request, TradeOrder entity) { entity.update(request.getAccountId(), request.getInstrumentId(), request.getSide(), request.getQuantity(), request.getOrderType(), request.getStatus()); }
-  public TradeOrderResponse toResponse(TradeOrder entity) {
+  public Order toDomain(TradeOrderRequest request) {
+    return Order.createOrder(
+        request.getAccountId(),
+        request.getInstrumentId(),
+        request.getSide(),
+        request.getQuantity(),
+        request.getOrderType(),
+        request.getStatus());
+  }
+
+  public void apply(TradeOrderRequest request, Order order) {
+    order.updateOrder(
+        request.getAccountId(),
+        request.getInstrumentId(),
+        request.getSide(),
+        request.getQuantity(),
+        request.getOrderType(),
+        request.getStatus());
+  }
+
+  public TradeOrderResponse toResponse(Order order) {
     return TradeOrderResponse.builder()
-        .orderId(entity.orderId())
-        .accountId(entity.accountId())
-        .instrumentId(entity.instrumentId())
-        .side(entity.side())
-        .quantity(entity.quantity())
-        .orderType(entity.orderType())
-        .status(entity.status())
-        .createdAt(entity.createdAt())
+        .orderId(order.getId().getValue())
+        .accountId(order.getAccountId().getValue())
+        .instrumentId(order.getInstrumentId().getValue())
+        .side(order.getSide().name())
+        .quantity(order.getQuantity().getValue())
+        .orderType(order.getOrderType().name())
+        .status(order.getStatus().name())
+        .createdAt(order.getCreatedAt())
         .build();
   }
 }

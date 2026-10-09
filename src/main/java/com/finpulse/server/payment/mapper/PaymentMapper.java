@@ -7,17 +7,33 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PaymentMapper {
-  public Payment toDomain(PaymentRequest request) { return Payment.create(request.getAccountId(), request.getCounterparty(), request.getAmount(), request.getCurrency(), request.getStatus()); }
-  public void apply(PaymentRequest request, Payment entity) { entity.update(request.getAccountId(), request.getCounterparty(), request.getAmount(), request.getCurrency(), request.getStatus()); }
-  public PaymentResponse toResponse(Payment entity) {
+  public Payment toDomain(PaymentRequest request) {
+    return Payment.createPayment(
+        request.getAccountId(),
+        request.getCounterparty(),
+        request.getAmount(),
+        request.getCurrency(),
+        request.getStatus());
+  }
+
+  public void apply(PaymentRequest request, Payment payment) {
+    payment.updatePayment(
+        request.getAccountId(),
+        request.getCounterparty(),
+        request.getAmount(),
+        request.getCurrency(),
+        request.getStatus());
+  }
+
+  public PaymentResponse toResponse(Payment payment) {
     return PaymentResponse.builder()
-        .paymentId(entity.paymentId())
-        .accountId(entity.accountId())
-        .counterparty(entity.counterparty())
-        .amount(entity.amount())
-        .currency(entity.currency())
-        .status(entity.status())
-        .createdAt(entity.createdAt())
+        .paymentId(payment.getId().getValue())
+        .accountId(payment.getAccountId().getValue())
+        .counterparty(payment.getCounterparty())
+        .amount(payment.getAmount().getAmount())
+        .currency(payment.getAmount().getCurrency().getCode())
+        .status(payment.getStatus().name())
+        .createdAt(payment.getCreatedAt())
         .build();
   }
 }

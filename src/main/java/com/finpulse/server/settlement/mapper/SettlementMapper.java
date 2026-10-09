@@ -7,15 +7,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SettlementMapper {
-  public Settlement toDomain(SettlementRequest request) { return Settlement.create(request.getTradeId(), request.getPaymentId(), request.getStatus(), request.getSettledAt()); }
-  public void apply(SettlementRequest request, Settlement entity) { entity.update(request.getTradeId(), request.getPaymentId(), request.getStatus(), request.getSettledAt()); }
-  public SettlementResponse toResponse(Settlement entity) {
+  public Settlement toDomain(SettlementRequest request) {
+    return Settlement.createSettlement(
+        request.getTradeId(),
+        request.getPaymentId(),
+        request.getStatus(),
+        request.getSettledAt());
+  }
+
+  public void apply(SettlementRequest request, Settlement settlement) {
+    settlement.updateSettlement(
+        request.getTradeId(),
+        request.getPaymentId(),
+        request.getStatus(),
+        request.getSettledAt());
+  }
+
+  public SettlementResponse toResponse(Settlement settlement) {
     return SettlementResponse.builder()
-        .settlementId(entity.settlementId())
-        .tradeId(entity.tradeId())
-        .paymentId(entity.paymentId())
-        .status(entity.status())
-        .settledAt(entity.settledAt())
+        .settlementId(settlement.getId().getValue())
+        .tradeId(settlement.getTradeId().getValue())
+        .paymentId(settlement.getPaymentId().getValue())
+        .status(settlement.getStatus().name())
+        .settledAt(settlement.getSettledAt())
         .build();
   }
 }

@@ -1,40 +1,81 @@
 package com.finpulse.server.payment.domain.model;
 
+import com.finpulse.server.account.domain.model.AccountId;
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import com.finpulse.server.common.domain.model.Money;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Payment {
-  @NonNull private final UUID paymentId;
-  @NonNull private UUID accountId;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class Payment extends AbstractEntity<PaymentId> {
+
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "account_id", nullable = false))
+  private AccountId accountId;
+
   private String counterparty;
-  @NonNull private BigDecimal amount;
-  @NonNull private String currency;
-  @NonNull private String status;
-  @NonNull private final Instant createdAt;
 
-  public static Payment create(UUID accountId, String counterparty, BigDecimal amount, String currency, String status) {
-    String statusResolved = (status == null || status.isBlank()) ? "pending" : status;
-    return new Payment(UUID.randomUUID(), accountId, counterparty, amount, currency, statusResolved, Instant.now());
-  }
+  @NotNull
+  @Valid
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name = "amount", column = @Column(name = "amount", nullable = false)),
+    @AttributeOverride(
+        name = "currency.code",
+        column = @Column(name = "currency", nullable = false))
+  })
+  private Money amount;
 
-  public static Payment rehydrate(UUID paymentId, UUID accountId, String counterparty, BigDecimal amount, String currency, String status, Instant createdAt) {
-    return new Payment(paymentId, accountId, counterparty, amount, currency, status, createdAt);
-  }
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private PaymentStatus status;
 
-  public void update(@NonNull UUID accountId, String counterparty, @NonNull BigDecimal amount, @NonNull String currency, @NonNull String status) {
-    this.accountId = accountId;
+  private Payment(
+      PaymentId id, AccountId accountId, String counterparty, Money amount, PaymentStatus status) {
+    super(id);
+    this.accountId = Objects.requireNonNull(accountId, "accountId cannot be null");
     this.counterparty = counterparty;
-    this.amount = amount;
-    this.currency = currency;
-    this.status = status;
+    this.amount = Objects.requireNonNull(amount, "amount cannot be null");
+    this.status = Objects.requireNonNull(status, "status cannot be null");
+  }
+
+  public static Payment createPayment(
+      UUID accountId, String counterparty, BigDecimal amount, String currency, String status) {
+    return new Payment(
+        PaymentId.generateId(),
+        AccountId.parseId(accountId),
+        counterparty,
+        Money.createMoney(amount, currency),
+        PaymentStatus.parseStatus(status));
+  }
+
+  public void updatePayment(
+      UUID accountId, String counterparty, BigDecimal amount, String currency, String status) {
+    this.accountId = AccountId.parseId(accountId);
+    this.counterparty = counterparty;
+    this.amount = Money.createMoney(amount, currency);
+    this.status = PaymentStatus.parseStatus(status);
+  }
+
+  public void changeStatus(PaymentStatus status) {
+    this.status = Objects.requireNonNull(status, "status cannot be null");
   }
 }
