@@ -1,18 +1,20 @@
 package com.finpulse.server.watchlist.domain.repository;
 
 import com.finpulse.server.watchlist.domain.model.Watchlist;
+import com.finpulse.server.watchlist.domain.model.WatchlistId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface WatchlistRepository {
-  List<Watchlist> findAll(int limit, int offset);
+public interface WatchlistRepository extends Repository<Watchlist, WatchlistId> {
 
-  Optional<Watchlist> findById(UUID watchlistId);
+  List<Watchlist> findAllByOrderByCreatedAtDesc();
 
-  boolean existsById(UUID watchlistId);
+  Optional<Watchlist> findById(WatchlistId id);
+
+  boolean existsById(WatchlistId id);
 
   Watchlist save(Watchlist watchlist);
 
-  void deleteById(UUID watchlistId);
+  void deleteById(WatchlistId id);
 }

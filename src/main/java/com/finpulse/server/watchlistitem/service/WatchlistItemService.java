@@ -1,6 +1,7 @@
 package com.finpulse.server.watchlistitem.service;
 
 import com.finpulse.server.watchlistitem.domain.model.WatchlistItem;
+import com.finpulse.server.watchlistitem.domain.model.WatchlistItemId;
 import com.finpulse.server.watchlistitem.domain.repository.WatchlistItemRepository;
 import com.finpulse.server.watchlistitem.dto.WatchlistItemRequest;
 import com.finpulse.server.watchlistitem.mapper.WatchlistItemMapper;
@@ -21,13 +22,15 @@ public class WatchlistItemService {
 
   @Transactional(readOnly = true)
   public List<WatchlistItem> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public WatchlistItem getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(WatchlistItemId.parseId(id))
         .orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Watchlist item not found"));
   }
@@ -47,9 +50,10 @@ public class WatchlistItemService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    WatchlistItemId watchlistItemId = WatchlistItemId.parseId(id);
+    if (!repository.existsById(watchlistItemId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Watchlist item not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(watchlistItemId);
   }
 }

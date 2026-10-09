@@ -8,19 +8,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class WatchlistItemMapper {
   public WatchlistItem toDomain(WatchlistItemRequest request) {
-    return WatchlistItem.create(request.getWatchlistId(), request.getInstrumentId());
+    return WatchlistItem.createWatchlistItem(request.getWatchlistId(), request.getInstrumentId());
   }
 
   public void apply(WatchlistItemRequest request, WatchlistItem item) {
-    item.update(request.getWatchlistId(), request.getInstrumentId());
+    item.updateWatchlistItem(request.getWatchlistId(), request.getInstrumentId());
   }
 
   public WatchlistItemResponse toResponse(WatchlistItem item) {
     return WatchlistItemResponse.builder()
-        .watchlistItemId(item.watchlistItemId())
-        .watchlistId(item.watchlistId())
-        .instrumentId(item.instrumentId())
-        .addedAt(item.addedAt())
+        .watchlistItemId(item.getId().getValue())
+        .watchlistId(item.getWatchlistId().getValue())
+        .instrumentId(item.getInstrumentId().getValue())
+        .addedAt(item.getAddedAt())
         .build();
   }
 }

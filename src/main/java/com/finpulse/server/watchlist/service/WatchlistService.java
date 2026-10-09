@@ -1,6 +1,7 @@
 package com.finpulse.server.watchlist.service;
 
 import com.finpulse.server.watchlist.domain.model.Watchlist;
+import com.finpulse.server.watchlist.domain.model.WatchlistId;
 import com.finpulse.server.watchlist.domain.repository.WatchlistRepository;
 import com.finpulse.server.watchlist.dto.WatchlistRequest;
 import com.finpulse.server.watchlist.mapper.WatchlistMapper;
@@ -21,13 +22,15 @@ public class WatchlistService {
 
   @Transactional(readOnly = true)
   public List<Watchlist> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Watchlist getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(WatchlistId.parseId(id))
         .orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Watchlist not found"));
   }
@@ -47,9 +50,10 @@ public class WatchlistService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    WatchlistId watchlistId = WatchlistId.parseId(id);
+    if (!repository.existsById(watchlistId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Watchlist not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(watchlistId);
   }
 }
