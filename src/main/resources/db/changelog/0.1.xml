@@ -6,9 +6,9 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="001-create-user-preference" author="finpulse">
-        <comment>Align with scripts/db/schema.sql user_preference</comment>
+        <comment>user_preference final schema with typed id</comment>
         <createTable tableName="user_preference">
-            <column name="preference_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="uuid">
@@ -19,16 +19,22 @@
             <column name="notifications_enabled" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
             <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
     <changeSet id="002-create-customer-auth" author="finpulse">
-        <comment>customer, user_credential, session aligned with scripts/db/schema.sql</comment>
+        <comment>customer, user_credential, session final schema</comment>
         <createTable tableName="customer">
-            <column name="customer_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(512)">
@@ -39,9 +45,15 @@
             <column name="created_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="user_credential">
-            <column name="credential_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="uuid">
@@ -56,12 +68,18 @@
             <column name="created_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createIndex tableName="user_credential" indexName="idx_user_credential_email">
             <column name="email"/>
         </createIndex>
         <createTable tableName="session">
-            <column name="session_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="uuid">
@@ -83,9 +101,9 @@
     </changeSet>
 
     <changeSet id="003-create-account" author="finpulse">
-        <comment>account aligned with scripts/db/schema.sql</comment>
+        <comment>account final schema</comment>
         <createTable tableName="account">
-            <column name="account_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="uuid">
@@ -103,6 +121,15 @@
             <column name="opened_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createIndex tableName="account" indexName="idx_account_customer">
             <column name="customer_id"/>
@@ -110,9 +137,9 @@
     </changeSet>
 
     <changeSet id="004-create-instrument-bond-option-market-data" author="finpulse">
-        <comment>instrument, bond, option, market_data aligned with scripts/db/schema.sql</comment>
+        <comment>instrument, bond, option, market_data final schema</comment>
         <createTable tableName="instrument">
-            <column name="instrument_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="symbol" type="varchar(512)">
@@ -122,9 +149,18 @@
             <column name="asset_class" type="varchar(64)"/>
             <column name="currency" type="varchar(16)"/>
             <column name="exchange" type="varchar(64)"/>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="bond">
-            <column name="bond_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="instrument_id" type="uuid">
@@ -137,12 +173,21 @@
             <column name="convexity" type="numeric(12, 6)"/>
             <column name="maturity_years" type="numeric(8, 4)"/>
             <column name="frequency" type="integer"/>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="bond" baseColumnNames="instrument_id"
-            referencedTableName="instrument" referencedColumnNames="instrument_id"
+            referencedTableName="instrument" referencedColumnNames="id"
             constraintName="fk_bond_instrument" onDelete="CASCADE"/>
         <createTable tableName="option">
-            <column name="option_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="instrument_id" type="uuid">
@@ -169,15 +214,24 @@
             <column name="vega" type="numeric(12, 6)"/>
             <column name="rho" type="numeric(12, 6)"/>
             <column name="implied_volatility" type="numeric(12, 6)"/>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="option" baseColumnNames="instrument_id"
-            referencedTableName="instrument" referencedColumnNames="instrument_id"
+            referencedTableName="instrument" referencedColumnNames="id"
             constraintName="fk_option_instrument" onDelete="CASCADE"/>
         <addForeignKeyConstraint baseTableName="option" baseColumnNames="underlying_instrument_id"
-            referencedTableName="instrument" referencedColumnNames="instrument_id"
+            referencedTableName="instrument" referencedColumnNames="id"
             constraintName="fk_option_underlying_instrument" onDelete="CASCADE"/>
         <createTable tableName="market_data">
-            <column name="data_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="instrument_id" type="uuid">
@@ -194,9 +248,18 @@
             </column>
             <column name="volume" type="numeric(20, 4)"/>
             <column name="change_pct" type="numeric(12, 6)"/>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="market_data" baseColumnNames="instrument_id"
-            referencedTableName="instrument" referencedColumnNames="instrument_id"
+            referencedTableName="instrument" referencedColumnNames="id"
             constraintName="fk_market_data_instrument" onDelete="CASCADE"/>
         <createIndex tableName="market_data" indexName="idx_market_data_instrument">
             <column name="instrument_id"/>
@@ -208,9 +271,9 @@
     </changeSet>
 
     <changeSet id="005-create-watchlist" author="finpulse">
-        <comment>watchlist and watchlist_item aligned with scripts/db/schema.sql</comment>
+        <comment>watchlist and watchlist_item final schema</comment>
         <createTable tableName="watchlist">
-            <column name="watchlist_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="uuid">
@@ -222,12 +285,18 @@
             <column name="created_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
+            <column name="updated_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createIndex tableName="watchlist" indexName="idx_watchlist_customer">
             <column name="customer_id"/>
         </createIndex>
         <createTable tableName="watchlist_item">
-            <column name="watchlist_item_id" type="uuid">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="watchlist_id" type="uuid">
@@ -237,6 +306,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="added_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -249,26 +321,30 @@
             constraintName="uk_watchlist_item_watchlist_instrument"/>
     </changeSet>
 
-
     <changeSet id="006-create-trading-payments" author="finpulse">
         <comment>portfolio, position, orders, trade, cash_transaction, payment, settlement, realtime_quote</comment>
         <createTable tableName="portfolio">
-            <column name="portfolio_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="account_id" type="uuid"><constraints nullable="false"/></column>
             <column name="name" type="varchar(512)"><constraints nullable="false"/></column>
             <column name="base_currency" type="varchar(16)"><constraints nullable="false"/></column>
             <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="position">
-            <column name="position_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="portfolio_id" type="uuid"><constraints nullable="false"/></column>
             <column name="instrument_id" type="uuid"><constraints nullable="false"/></column>
             <column name="quantity" type="numeric(20, 8)"><constraints nullable="false"/></column>
             <column name="cost_basis" type="numeric(20, 8)"/>
             <column name="as_of_date" type="date"><constraints nullable="false"/></column>
+            <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="orders">
-            <column name="order_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="account_id" type="uuid"><constraints nullable="false"/></column>
             <column name="instrument_id" type="uuid"><constraints nullable="false"/></column>
             <column name="side" type="varchar(16)"><constraints nullable="false"/></column>
@@ -276,39 +352,51 @@
             <column name="order_type" type="varchar(32)"><constraints nullable="false"/></column>
             <column name="status" type="varchar(32)"><constraints nullable="false"/></column>
             <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="trade">
-            <column name="trade_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="order_id" type="uuid"><constraints nullable="false"/></column>
             <column name="quantity" type="numeric(20, 8)"><constraints nullable="false"/></column>
             <column name="price" type="numeric(20, 8)"><constraints nullable="false"/></column>
             <column name="fee" type="numeric(20, 8)"/>
             <column name="executed_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="cash_transaction">
-            <column name="transaction_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="account_id" type="uuid"><constraints nullable="false"/></column>
             <column name="type" type="varchar(64)"><constraints nullable="false"/></column>
             <column name="amount" type="numeric(20, 8)"><constraints nullable="false"/></column>
             <column name="currency" type="varchar(16)"><constraints nullable="false"/></column>
             <column name="status" type="varchar(32)"><constraints nullable="false"/></column>
             <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="payment">
-            <column name="payment_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="account_id" type="uuid"><constraints nullable="false"/></column>
             <column name="counterparty" type="varchar(512)"/>
             <column name="amount" type="numeric(20, 8)"><constraints nullable="false"/></column>
             <column name="currency" type="varchar(16)"><constraints nullable="false"/></column>
             <column name="status" type="varchar(32)"><constraints nullable="false"/></column>
             <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="settlement">
-            <column name="settlement_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="trade_id" type="uuid"><constraints nullable="false"/></column>
             <column name="payment_id" type="uuid"><constraints nullable="false"/></column>
             <column name="status" type="varchar(32)"><constraints nullable="false"/></column>
             <column name="settled_at" type="timestamp with time zone"/>
+            <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="updated_at" type="timestamp with time zone"><constraints nullable="false"/></column>
+            <column name="version" type="bigint"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="realtime_quote">
             <column name="symbol" type="varchar(64)"><constraints primaryKey="true" nullable="false"/></column>
@@ -330,7 +418,7 @@
             <column name="hash" type="varchar(128)"><constraints nullable="false"/></column>
         </createTable>
         <createTable tableName="chain_transaction">
-            <column name="tx_id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
             <column name="block_index" type="integer"><constraints nullable="false"/></column>
             <column name="sender_account_id" type="uuid"><constraints nullable="false"/></column>
             <column name="receiver_account_id" type="uuid"><constraints nullable="false"/></column>
@@ -339,6 +427,5 @@
             <column name="created_at" type="timestamp with time zone"><constraints nullable="false"/></column>
         </createTable>
     </changeSet>
-
 
 </databaseChangeLog>
