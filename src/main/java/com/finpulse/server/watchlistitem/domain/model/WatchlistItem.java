@@ -1,33 +1,55 @@
 package com.finpulse.server.watchlistitem.domain.model;
 
+import com.finpulse.server.common.domain.model.AbstractImmutable;
+import com.finpulse.server.instrument.domain.model.InstrumentId;
+import com.finpulse.server.watchlist.domain.model.WatchlistId;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class WatchlistItem {
-  @NonNull private final UUID watchlistItemId;
-  @NonNull private UUID watchlistId;
-  @NonNull private UUID instrumentId;
-  @NonNull private final Instant addedAt;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class WatchlistItem extends AbstractImmutable<WatchlistItemId> {
 
-  public static WatchlistItem create(UUID watchlistId, UUID instrumentId) {
-    return new WatchlistItem(UUID.randomUUID(), watchlistId, instrumentId, Instant.now());
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "watchlist_id", nullable = false))
+  private WatchlistId watchlistId;
+
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "instrument_id", nullable = false))
+  private InstrumentId instrumentId;
+
+  @NotNull private Instant addedAt;
+
+  private WatchlistItem(
+      WatchlistItemId id, WatchlistId watchlistId, InstrumentId instrumentId, Instant addedAt) {
+    super(id);
+    this.watchlistId = Objects.requireNonNull(watchlistId, "watchlistId cannot be null");
+    this.instrumentId = Objects.requireNonNull(instrumentId, "instrumentId cannot be null");
+    this.addedAt = Objects.requireNonNull(addedAt, "addedAt cannot be null");
   }
 
-  public static WatchlistItem rehydrate(
-      UUID watchlistItemId, UUID watchlistId, UUID instrumentId, Instant addedAt) {
-    return new WatchlistItem(watchlistItemId, watchlistId, instrumentId, addedAt);
+  public static WatchlistItem createWatchlistItem(UUID watchlistId, UUID instrumentId) {
+    return new WatchlistItem(
+        WatchlistItemId.generateId(),
+        WatchlistId.parseId(watchlistId),
+        InstrumentId.parseId(instrumentId),
+        Instant.now());
   }
 
-  public void update(@NonNull UUID watchlistId, @NonNull UUID instrumentId) {
-    this.watchlistId = watchlistId;
-    this.instrumentId = instrumentId;
+  public void updateWatchlistItem(UUID watchlistId, UUID instrumentId) {
+    this.watchlistId = WatchlistId.parseId(watchlistId);
+    this.instrumentId = InstrumentId.parseId(instrumentId);
   }
 }
