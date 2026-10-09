@@ -1,6 +1,7 @@
 package com.finpulse.server.option.service;
 
 import com.finpulse.server.option.domain.model.Option;
+import com.finpulse.server.option.domain.model.OptionId;
 import com.finpulse.server.option.domain.repository.OptionRepository;
 import com.finpulse.server.option.dto.OptionRequest;
 import com.finpulse.server.option.mapper.OptionMapper;
@@ -21,13 +22,15 @@ public class OptionService {
 
   @Transactional(readOnly = true)
   public List<Option> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Option getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(OptionId.parseId(id))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Option not found"));
   }
 
@@ -46,9 +49,10 @@ public class OptionService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    OptionId optionId = OptionId.parseId(id);
+    if (!repository.existsById(optionId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Option not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(optionId);
   }
 }

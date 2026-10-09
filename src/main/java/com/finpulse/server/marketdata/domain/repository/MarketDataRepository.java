@@ -1,18 +1,20 @@
 package com.finpulse.server.marketdata.domain.repository;
 
 import com.finpulse.server.marketdata.domain.model.MarketData;
+import com.finpulse.server.marketdata.domain.model.MarketDataId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface MarketDataRepository {
-  List<MarketData> findAll(int limit, int offset);
+public interface MarketDataRepository extends Repository<MarketData, MarketDataId> {
 
-  Optional<MarketData> findById(UUID dataId);
+  List<MarketData> findAllByOrderByCreatedAtDesc();
 
-  boolean existsById(UUID dataId);
+  Optional<MarketData> findById(MarketDataId id);
+
+  boolean existsById(MarketDataId id);
 
   MarketData save(MarketData marketData);
 
-  void deleteById(UUID dataId);
+  void deleteById(MarketDataId id);
 }

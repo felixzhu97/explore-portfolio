@@ -1,18 +1,20 @@
 package com.finpulse.server.option.domain.repository;
 
 import com.finpulse.server.option.domain.model.Option;
+import com.finpulse.server.option.domain.model.OptionId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface OptionRepository {
-  List<Option> findAll(int limit, int offset);
+public interface OptionRepository extends Repository<Option, OptionId> {
 
-  Optional<Option> findById(UUID optionId);
+  List<Option> findAllByOrderByCreatedAtDesc();
 
-  boolean existsById(UUID optionId);
+  Optional<Option> findById(OptionId id);
+
+  boolean existsById(OptionId id);
 
   Option save(Option option);
 
-  void deleteById(UUID optionId);
+  void deleteById(OptionId id);
 }

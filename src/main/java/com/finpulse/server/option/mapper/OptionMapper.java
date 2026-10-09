@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OptionMapper {
   public Option toDomain(OptionRequest request) {
-    return Option.create(
+    return Option.createOption(
         request.getInstrumentId(),
         request.getUnderlyingInstrumentId(),
         request.getStrike(),
@@ -26,7 +26,7 @@ public class OptionMapper {
   }
 
   public void apply(OptionRequest request, Option option) {
-    option.update(
+    option.updateOption(
         request.getInstrumentId(),
         request.getUnderlyingInstrumentId(),
         request.getStrike(),
@@ -45,21 +45,21 @@ public class OptionMapper {
 
   public OptionResponse toResponse(Option option) {
     return OptionResponse.builder()
-        .optionId(option.optionId())
-        .instrumentId(option.instrumentId())
-        .underlyingInstrumentId(option.underlyingInstrumentId())
-        .strike(option.strike())
-        .expiry(option.expiry())
-        .optionType(option.optionType())
-        .riskFreeRate(option.riskFreeRate())
-        .volatility(option.volatility())
-        .bsPrice(option.bsPrice())
-        .delta(option.delta())
-        .gamma(option.gamma())
-        .theta(option.theta())
-        .vega(option.vega())
-        .rho(option.rho())
-        .impliedVolatility(option.impliedVolatility())
+        .optionId(option.getId().getValue())
+        .instrumentId(option.getInstrumentId().getValue())
+        .underlyingInstrumentId(option.getUnderlyingInstrumentId().getValue())
+        .strike(option.getStrike())
+        .expiry(option.getExpiry())
+        .optionType(option.getOptionType().name())
+        .riskFreeRate(option.getRiskFreeRate())
+        .volatility(option.getVolatility())
+        .bsPrice(option.getBsPrice())
+        .delta(option.getDelta())
+        .gamma(option.getGamma())
+        .theta(option.getTheta())
+        .vega(option.getVega())
+        .rho(option.getRho())
+        .impliedVolatility(option.getImpliedVolatility())
         .build();
   }
 }

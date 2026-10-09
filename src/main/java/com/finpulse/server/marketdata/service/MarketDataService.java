@@ -1,6 +1,7 @@
 package com.finpulse.server.marketdata.service;
 
 import com.finpulse.server.marketdata.domain.model.MarketData;
+import com.finpulse.server.marketdata.domain.model.MarketDataId;
 import com.finpulse.server.marketdata.domain.repository.MarketDataRepository;
 import com.finpulse.server.marketdata.dto.MarketDataRequest;
 import com.finpulse.server.marketdata.mapper.MarketDataMapper;
@@ -21,13 +22,15 @@ public class MarketDataService {
 
   @Transactional(readOnly = true)
   public List<MarketData> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public MarketData getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(MarketDataId.parseId(id))
         .orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Market data not found"));
   }
@@ -47,9 +50,10 @@ public class MarketDataService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    MarketDataId marketDataId = MarketDataId.parseId(id);
+    if (!repository.existsById(marketDataId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Market data not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(marketDataId);
   }
 }

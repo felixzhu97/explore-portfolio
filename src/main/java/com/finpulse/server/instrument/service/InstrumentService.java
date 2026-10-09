@@ -1,6 +1,7 @@
 package com.finpulse.server.instrument.service;
 
 import com.finpulse.server.instrument.domain.model.Instrument;
+import com.finpulse.server.instrument.domain.model.InstrumentId;
 import com.finpulse.server.instrument.domain.repository.InstrumentRepository;
 import com.finpulse.server.instrument.dto.InstrumentRequest;
 import com.finpulse.server.instrument.mapper.InstrumentMapper;
@@ -21,14 +22,17 @@ public class InstrumentService {
 
   @Transactional(readOnly = true)
   public List<Instrument> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Instrument getById(UUID id) {
     return repository
-        .findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found"));
+        .findById(InstrumentId.parseId(id))
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found"));
   }
 
   public Instrument create(InstrumentRequest request) {
@@ -46,9 +50,10 @@ public class InstrumentService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    InstrumentId instrumentId = InstrumentId.parseId(id);
+    if (!repository.existsById(instrumentId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Instrument not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(instrumentId);
   }
 }
