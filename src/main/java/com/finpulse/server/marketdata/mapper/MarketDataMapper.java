@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MarketDataMapper {
   public MarketData toDomain(MarketDataRequest request) {
-    return MarketData.create(
+    return MarketData.createMarketData(
         request.getInstrumentId(),
         request.getTimestamp(),
         request.getOpen(),
@@ -20,7 +20,7 @@ public class MarketDataMapper {
   }
 
   public void apply(MarketDataRequest request, MarketData marketData) {
-    marketData.update(
+    marketData.updateMarketData(
         request.getInstrumentId(),
         request.getTimestamp(),
         request.getOpen(),
@@ -33,15 +33,15 @@ public class MarketDataMapper {
 
   public MarketDataResponse toResponse(MarketData marketData) {
     return MarketDataResponse.builder()
-        .dataId(marketData.dataId())
-        .instrumentId(marketData.instrumentId())
-        .timestamp(marketData.timestamp())
-        .open(marketData.open())
-        .high(marketData.high())
-        .low(marketData.low())
-        .close(marketData.close())
-        .volume(marketData.volume())
-        .changePct(marketData.changePct())
+        .dataId(marketData.getId().getValue())
+        .instrumentId(marketData.getInstrumentId().getValue())
+        .timestamp(marketData.getTimestamp())
+        .open(marketData.getOpen())
+        .high(marketData.getHigh())
+        .low(marketData.getLow())
+        .close(marketData.getClose())
+        .volume(marketData.getVolume())
+        .changePct(marketData.getChangePct())
         .build();
   }
 }

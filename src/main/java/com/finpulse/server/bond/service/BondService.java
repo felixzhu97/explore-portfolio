@@ -1,6 +1,7 @@
 package com.finpulse.server.bond.service;
 
 import com.finpulse.server.bond.domain.model.Bond;
+import com.finpulse.server.bond.domain.model.BondId;
 import com.finpulse.server.bond.domain.repository.BondRepository;
 import com.finpulse.server.bond.dto.BondRequest;
 import com.finpulse.server.bond.mapper.BondMapper;
@@ -21,13 +22,15 @@ public class BondService {
 
   @Transactional(readOnly = true)
   public List<Bond> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Bond getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(BondId.parseId(id))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bond not found"));
   }
 
@@ -46,9 +49,10 @@ public class BondService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    BondId bondId = BondId.parseId(id);
+    if (!repository.existsById(bondId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bond not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(bondId);
   }
 }

@@ -8,24 +8,40 @@ import org.springframework.stereotype.Component;
 @Component
 public class BondMapper {
   public Bond toDomain(BondRequest request) {
-    return Bond.create(request.getInstrumentId(), request.getFaceValue(), request.getCouponRate(), request.getYtm(), request.getDuration(), request.getConvexity(), request.getMaturityYears(), request.getFrequency());
+    return Bond.createBond(
+        request.getInstrumentId(),
+        request.getFaceValue(),
+        request.getCouponRate(),
+        request.getYtm(),
+        request.getDuration(),
+        request.getConvexity(),
+        request.getMaturityYears(),
+        request.getFrequency());
   }
 
-  public void apply(BondRequest request, Bond entity) {
-    entity.update(request.getInstrumentId(), request.getFaceValue(), request.getCouponRate(), request.getYtm(), request.getDuration(), request.getConvexity(), request.getMaturityYears(), request.getFrequency());
+  public void apply(BondRequest request, Bond bond) {
+    bond.updateBond(
+        request.getInstrumentId(),
+        request.getFaceValue(),
+        request.getCouponRate(),
+        request.getYtm(),
+        request.getDuration(),
+        request.getConvexity(),
+        request.getMaturityYears(),
+        request.getFrequency());
   }
 
-  public BondResponse toResponse(Bond entity) {
+  public BondResponse toResponse(Bond bond) {
     return BondResponse.builder()
-        .bondId(entity.bondId())
-        .instrumentId(entity.instrumentId())
-        .faceValue(entity.faceValue())
-        .couponRate(entity.couponRate())
-        .ytm(entity.ytm())
-        .duration(entity.duration())
-        .convexity(entity.convexity())
-        .maturityYears(entity.maturityYears())
-        .frequency(entity.frequency())
+        .bondId(bond.getId().getValue())
+        .instrumentId(bond.getInstrumentId().getValue())
+        .faceValue(bond.getFaceValue())
+        .couponRate(bond.getCouponRate())
+        .ytm(bond.getYtm())
+        .duration(bond.getDuration())
+        .convexity(bond.getConvexity())
+        .maturityYears(bond.getMaturityYears())
+        .frequency(bond.getFrequency())
         .build();
   }
 }

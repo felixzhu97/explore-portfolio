@@ -1,29 +1,68 @@
 package com.finpulse.server.marketdata.domain.model;
 
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import com.finpulse.server.instrument.domain.model.InstrumentId;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class MarketData {
-  @NonNull private final UUID dataId;
-  @NonNull private UUID instrumentId;
-  @NonNull private Instant timestamp;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class MarketData extends AbstractEntity<MarketDataId> {
+
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "instrument_id", nullable = false))
+  private InstrumentId instrumentId;
+
+  @NotNull private Instant timestamp;
+
   private BigDecimal open;
+
   private BigDecimal high;
+
   private BigDecimal low;
-  @NonNull private BigDecimal close;
+
+  @NotNull private BigDecimal close;
+
   private BigDecimal volume;
+
   private BigDecimal changePct;
 
-  public static MarketData create(
+  private MarketData(
+      MarketDataId id,
+      InstrumentId instrumentId,
+      Instant timestamp,
+      BigDecimal open,
+      BigDecimal high,
+      BigDecimal low,
+      BigDecimal close,
+      BigDecimal volume,
+      BigDecimal changePct) {
+    super(id);
+    this.instrumentId = Objects.requireNonNull(instrumentId, "instrumentId cannot be null");
+    this.timestamp = Objects.requireNonNull(timestamp, "timestamp cannot be null");
+    this.open = open;
+    this.high = high;
+    this.low = low;
+    this.close = Objects.requireNonNull(close, "close cannot be null");
+    this.volume = volume;
+    this.changePct = changePct;
+  }
+
+  public static MarketData createMarketData(
       UUID instrumentId,
       Instant timestamp,
       BigDecimal open,
@@ -33,8 +72,8 @@ public final class MarketData {
       BigDecimal volume,
       BigDecimal changePct) {
     return new MarketData(
-        UUID.randomUUID(),
-        instrumentId,
+        MarketDataId.generateId(),
+        InstrumentId.parseId(instrumentId),
         timestamp,
         open,
         high,
@@ -44,8 +83,7 @@ public final class MarketData {
         changePct);
   }
 
-  public static MarketData rehydrate(
-      UUID dataId,
+  public void updateMarketData(
       UUID instrumentId,
       Instant timestamp,
       BigDecimal open,
@@ -54,25 +92,12 @@ public final class MarketData {
       BigDecimal close,
       BigDecimal volume,
       BigDecimal changePct) {
-    return new MarketData(
-        dataId, instrumentId, timestamp, open, high, low, close, volume, changePct);
-  }
-
-  public void update(
-      @NonNull UUID instrumentId,
-      @NonNull Instant timestamp,
-      BigDecimal open,
-      BigDecimal high,
-      BigDecimal low,
-      @NonNull BigDecimal close,
-      BigDecimal volume,
-      BigDecimal changePct) {
-    this.instrumentId = instrumentId;
-    this.timestamp = timestamp;
+    this.instrumentId = InstrumentId.parseId(instrumentId);
+    this.timestamp = Objects.requireNonNull(timestamp, "timestamp cannot be null");
     this.open = open;
     this.high = high;
     this.low = low;
-    this.close = close;
+    this.close = Objects.requireNonNull(close, "close cannot be null");
     this.volume = volume;
     this.changePct = changePct;
   }
