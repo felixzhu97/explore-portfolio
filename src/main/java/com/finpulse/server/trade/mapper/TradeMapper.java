@@ -7,16 +7,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TradeMapper {
-  public Trade toDomain(TradeRequest request) { return Trade.create(request.getOrderId(), request.getQuantity(), request.getPrice(), request.getFee()); }
-  public void apply(TradeRequest request, Trade entity) { entity.update(request.getOrderId(), request.getQuantity(), request.getPrice(), request.getFee()); }
-  public TradeResponse toResponse(Trade entity) {
+  public Trade toDomain(TradeRequest request) {
+    return Trade.createTrade(
+        request.getOrderId(), request.getQuantity(), request.getPrice(), request.getFee());
+  }
+
+  public void apply(TradeRequest request, Trade trade) {
+    trade.updateTrade(
+        request.getOrderId(), request.getQuantity(), request.getPrice(), request.getFee());
+  }
+
+  public TradeResponse toResponse(Trade trade) {
     return TradeResponse.builder()
-        .tradeId(entity.tradeId())
-        .orderId(entity.orderId())
-        .quantity(entity.quantity())
-        .price(entity.price())
-        .fee(entity.fee())
-        .executedAt(entity.executedAt())
+        .tradeId(trade.getId().getValue())
+        .orderId(trade.getOrderId().getValue())
+        .quantity(trade.getQuantity().getValue())
+        .price(trade.getPrice())
+        .fee(trade.getFee())
+        .executedAt(trade.getExecutedAt())
         .build();
   }
 }

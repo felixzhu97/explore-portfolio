@@ -1,14 +1,20 @@
 package com.finpulse.server.payment.domain.repository;
 
 import com.finpulse.server.payment.domain.model.Payment;
+import com.finpulse.server.payment.domain.model.PaymentId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface PaymentRepository {
-  List<Payment> findAll(int limit, int offset);
-  Optional<Payment> findById(UUID id);
-  boolean existsById(UUID id);
-  Payment save(Payment entity);
-  void deleteById(UUID id);
+public interface PaymentRepository extends Repository<Payment, PaymentId> {
+
+  List<Payment> findAllByOrderByCreatedAtDesc();
+
+  Optional<Payment> findById(PaymentId id);
+
+  boolean existsById(PaymentId id);
+
+  Payment save(Payment payment);
+
+  void deleteById(PaymentId id);
 }

@@ -1,14 +1,20 @@
 package com.finpulse.server.trade.domain.repository;
 
 import com.finpulse.server.trade.domain.model.Trade;
+import com.finpulse.server.trade.domain.model.TradeId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface TradeRepository {
-  List<Trade> findAll(int limit, int offset);
-  Optional<Trade> findById(UUID id);
-  boolean existsById(UUID id);
-  Trade save(Trade entity);
-  void deleteById(UUID id);
+public interface TradeRepository extends Repository<Trade, TradeId> {
+
+  List<Trade> findAllByOrderByCreatedAtDesc();
+
+  Optional<Trade> findById(TradeId id);
+
+  boolean existsById(TradeId id);
+
+  Trade save(Trade trade);
+
+  void deleteById(TradeId id);
 }

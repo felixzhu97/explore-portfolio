@@ -1,6 +1,7 @@
 package com.finpulse.server.settlement.service;
 
 import com.finpulse.server.settlement.domain.model.Settlement;
+import com.finpulse.server.settlement.domain.model.SettlementId;
 import com.finpulse.server.settlement.domain.repository.SettlementRepository;
 import com.finpulse.server.settlement.dto.SettlementRequest;
 import com.finpulse.server.settlement.mapper.SettlementMapper;
@@ -20,20 +21,39 @@ public class SettlementService {
   private final SettlementMapper mapper;
 
   @Transactional(readOnly = true)
-  public List<Settlement> list(int limit, int offset) { return repository.findAll(limit, offset); }
+  public List<Settlement> list(int limit, int offset) {
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
+  }
 
   @Transactional(readOnly = true)
   public Settlement getById(UUID id) {
-    return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Settlement not found"));
+    return repository
+        .findById(SettlementId.parseId(id))
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Settlement not found"));
   }
 
-  public Settlement create(SettlementRequest request) { return repository.save(mapper.toDomain(request)); }
-  public List<Settlement> createBatch(List<SettlementRequest> requests) { return requests.stream().map(this::create).toList(); }
-  public Settlement update(UUID id, SettlementRequest request) {
-    Settlement existing = getById(id); mapper.apply(request, existing); return repository.save(existing);
+  public Settlement create(SettlementRequest request) {
+    return repository.save(mapper.toDomain(request));
   }
+
+  public List<Settlement> createBatch(List<SettlementRequest> requests) {
+    return requests.stream().map(this::create).toList();
+  }
+
+  public Settlement update(UUID id, SettlementRequest request) {
+    Settlement existing = getById(id);
+    mapper.apply(request, existing);
+    return repository.save(existing);
+  }
+
   public void delete(UUID id) {
-    if (!repository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Settlement not found");
-    repository.deleteById(id);
+    SettlementId settlementId = SettlementId.parseId(id);
+    if (!repository.existsById(settlementId)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Settlement not found");
+    }
+    repository.deleteById(settlementId);
   }
 }

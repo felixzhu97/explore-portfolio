@@ -1,14 +1,20 @@
 package com.finpulse.server.settlement.domain.repository;
 
 import com.finpulse.server.settlement.domain.model.Settlement;
+import com.finpulse.server.settlement.domain.model.SettlementId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface SettlementRepository {
-  List<Settlement> findAll(int limit, int offset);
-  Optional<Settlement> findById(UUID id);
-  boolean existsById(UUID id);
-  Settlement save(Settlement entity);
-  void deleteById(UUID id);
+public interface SettlementRepository extends Repository<Settlement, SettlementId> {
+
+  List<Settlement> findAllByOrderByCreatedAtDesc();
+
+  Optional<Settlement> findById(SettlementId id);
+
+  boolean existsById(SettlementId id);
+
+  Settlement save(Settlement settlement);
+
+  void deleteById(SettlementId id);
 }
