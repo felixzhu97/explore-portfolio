@@ -18,7 +18,7 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams (and do not apply `style-z
 | [C1-Context.puml](./C1-Context.puml) | Context | People and external systems |
 | [C2-Container.puml](./C2-Container.puml) | Container | Admin, portal, mobile, Java API, Python analytics, data stores |
 | [C3-Component.puml](./C3-Component.puml) | Component | **Single** diagram: Java feature modules + Python analytics + UI apps |
-| [C4-Code-Domain-Model.puml](./C4-Code-Domain-Model.puml) | Code | DDD class model: AggregateRoot / Entity / ValueObject + associations (aligned to `com.finpulse.server.*.domain`) |
+| [C4-Code-Domain-Model.puml](./C4-Code-Domain-Model.puml) | Code | DDD class model by **business domain** package: AggregateRoot / Entity / ValueObject + kernel bases |
 | [C4-Deployment.puml](./C4-Deployment.puml) | Deployment | **Single** diagram: local/dev and production notes in one view |
 | [C4-Dynamic-Auth-Login.puml](./C4-Dynamic-Auth-Login.puml) | Dynamic | Login → auth module → DB → Bearer token |
 | [C4-Dynamic-Portfolio-Aggregate.puml](./C4-Dynamic-Portfolio-Aggregate.puml) | Dynamic | Client → Java proxy → Python → DB → aggregate |
@@ -29,9 +29,11 @@ Do not mix `C4_blue_new` into domain/dynamic diagrams (and do not apply `style-z
 
 ### Code / domain model notes
 
-- Stereotypes: **AggregateRoot**, **Entity**, **ValueObject** (see diagram legend).
+- Stereotypes: **Abstract**, **AggregateRoot**, **Entity**, **ValueObject**, **Enum** (see diagram legend).
+- PlantUML packages use business domain names (`Customer`, `Portfolio`, `Order`), not Java FQNs.
 - Composition (`*--`) = ownership inside an aggregate; open aggregation / arrows = reference by id.
-- Typed Id / Money / Symbol VOs express ubiquitous language; Java may still store bare `UUID` until extracted.
+- Typed Id / Money / Symbol / Quantity live in `domain.model` (no `domain.vo`); entities use `@EmbeddedId` typed ids.
+- Behaviors are verb + noun (`createPortfolio`, `updateName`, `changeStatus`).
 
 ### Dynamic role colors
 
