@@ -1,14 +1,20 @@
 package com.finpulse.server.portfolio.domain.repository;
 
 import com.finpulse.server.portfolio.domain.model.Portfolio;
+import com.finpulse.server.portfolio.domain.model.PortfolioId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface PortfolioRepository {
-  List<Portfolio> findAll(int limit, int offset);
-  Optional<Portfolio> findById(UUID id);
-  boolean existsById(UUID id);
-  Portfolio save(Portfolio entity);
-  void deleteById(UUID id);
+public interface PortfolioRepository extends Repository<Portfolio, PortfolioId> {
+
+  List<Portfolio> findAllByOrderByCreatedAtDesc();
+
+  Optional<Portfolio> findById(PortfolioId id);
+
+  boolean existsById(PortfolioId id);
+
+  Portfolio save(Portfolio portfolio);
+
+  void deleteById(PortfolioId id);
 }

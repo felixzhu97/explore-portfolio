@@ -7,16 +7,30 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PositionMapper {
-  public Position toDomain(PositionRequest request) { return Position.create(request.getPortfolioId(), request.getInstrumentId(), request.getQuantity(), request.getCostBasis()); }
-  public void apply(PositionRequest request, Position entity) { entity.update(request.getPortfolioId(), request.getInstrumentId(), request.getQuantity(), request.getCostBasis()); }
-  public PositionResponse toResponse(Position entity) {
+  public Position toDomain(PositionRequest request) {
+    return Position.createPosition(
+        request.getPortfolioId(),
+        request.getInstrumentId(),
+        request.getQuantity(),
+        request.getCostBasis());
+  }
+
+  public void apply(PositionRequest request, Position position) {
+    position.updatePosition(
+        request.getPortfolioId(),
+        request.getInstrumentId(),
+        request.getQuantity(),
+        request.getCostBasis());
+  }
+
+  public PositionResponse toResponse(Position position) {
     return PositionResponse.builder()
-        .positionId(entity.positionId())
-        .portfolioId(entity.portfolioId())
-        .instrumentId(entity.instrumentId())
-        .quantity(entity.quantity())
-        .costBasis(entity.costBasis())
-        .asOfDate(entity.asOfDate())
+        .positionId(position.getId().getValue())
+        .portfolioId(position.getPortfolioId().getValue())
+        .instrumentId(position.getInstrumentId().getValue())
+        .quantity(position.getQuantity().getValue())
+        .costBasis(position.getCostBasis())
+        .asOfDate(position.getAsOfDate())
         .build();
   }
 }

@@ -1,34 +1,67 @@
 package com.finpulse.server.portfolio.domain.model;
 
-import java.time.Instant;
+import com.finpulse.server.account.domain.model.AccountId;
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import com.finpulse.server.common.domain.model.CurrencyCode;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Portfolio {
-  @NonNull private final UUID portfolioId;
-  @NonNull private UUID accountId;
-  @NonNull private String name;
-  @NonNull private String baseCurrency;
-  @NonNull private final Instant createdAt;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class Portfolio extends AbstractEntity<PortfolioId> {
 
-  public static Portfolio create(UUID accountId, String name, String baseCurrency) {
-    return new Portfolio(UUID.randomUUID(), accountId, name, baseCurrency, Instant.now());
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "account_id", nullable = false))
+  private AccountId accountId;
+
+  @NotBlank private String name;
+
+  @NotNull
+  @Valid
+  @Embedded
+  @AttributeOverride(name = "code", column = @Column(name = "base_currency", nullable = false))
+  private CurrencyCode baseCurrency;
+
+  private Portfolio(PortfolioId id, AccountId accountId, String name, CurrencyCode baseCurrency) {
+    super(id);
+    this.accountId = Objects.requireNonNull(accountId, "accountId cannot be null");
+    this.name = Objects.requireNonNull(name, "name cannot be null");
+    this.baseCurrency = Objects.requireNonNull(baseCurrency, "baseCurrency cannot be null");
   }
 
-  public static Portfolio rehydrate(UUID portfolioId, UUID accountId, String name, String baseCurrency, Instant createdAt) {
-    return new Portfolio(portfolioId, accountId, name, baseCurrency, createdAt);
+  public static Portfolio createPortfolio(UUID accountId, String name, String baseCurrency) {
+    return new Portfolio(
+        PortfolioId.generateId(),
+        AccountId.parseId(accountId),
+        name,
+        CurrencyCode.parseCode(baseCurrency));
   }
 
-  public void update(@NonNull UUID accountId, @NonNull String name, @NonNull String baseCurrency) {
-    this.accountId = accountId;
-    this.name = name;
-    this.baseCurrency = baseCurrency;
+  public void updatePortfolio(UUID accountId, String name, String baseCurrency) {
+    this.accountId = AccountId.parseId(accountId);
+    this.name = Objects.requireNonNull(name, "name cannot be null");
+    this.baseCurrency = CurrencyCode.parseCode(baseCurrency);
+  }
+
+  public void updateName(String name) {
+    this.name = Objects.requireNonNull(name, "name cannot be null");
+  }
+
+  public void updateBaseCurrency(String baseCurrency) {
+    this.baseCurrency = CurrencyCode.parseCode(baseCurrency);
   }
 }
