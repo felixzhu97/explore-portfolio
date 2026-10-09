@@ -1,6 +1,7 @@
 package com.finpulse.server.account.service;
 
 import com.finpulse.server.account.domain.model.Account;
+import com.finpulse.server.account.domain.model.AccountId;
 import com.finpulse.server.account.domain.repository.AccountRepository;
 import com.finpulse.server.account.dto.AccountRequest;
 import com.finpulse.server.account.mapper.AccountMapper;
@@ -21,13 +22,15 @@ public class AccountService {
 
   @Transactional(readOnly = true)
   public List<Account> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Account getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(AccountId.parseId(id))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
   }
 
@@ -46,9 +49,10 @@ public class AccountService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    AccountId accountId = AccountId.parseId(id);
+    if (!repository.existsById(accountId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(accountId);
   }
 }

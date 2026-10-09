@@ -1,35 +1,44 @@
 package com.finpulse.server.auth.domain.model;
 
+import com.finpulse.server.common.domain.model.AbstractImmutable;
+import com.finpulse.server.customer.domain.model.CustomerId;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Session {
-  @NonNull private final UUID sessionId;
-  @NonNull private final UUID customerId;
-  @NonNull private final String token;
-  @NonNull private final Instant expiresAt;
-  @NonNull private final Instant createdAt;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class Session extends AbstractImmutable<SessionId> {
 
-  public static Session create(UUID customerId, String token, Instant expiresAt) {
-    return new Session(UUID.randomUUID(), customerId, token, expiresAt, Instant.now());
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "customer_id", nullable = false))
+  private CustomerId customerId;
+
+  @NotBlank private String token;
+
+  @NotNull private Instant expiresAt;
+
+  private Session(SessionId id, CustomerId customerId, String token, Instant expiresAt) {
+    super(id);
+    this.customerId = Objects.requireNonNull(customerId, "customerId cannot be null");
+    this.token = Objects.requireNonNull(token, "token cannot be null");
+    this.expiresAt = Objects.requireNonNull(expiresAt, "expiresAt cannot be null");
   }
 
-  public static Session rehydrate(
-      UUID sessionId, UUID customerId, String token, Instant expiresAt, Instant createdAt) {
+  public static Session createSession(UUID customerId, String token, Instant expiresAt) {
     return new Session(
-        sessionId,
-        customerId,
-        token,
-        expiresAt,
-        createdAt == null ? Instant.now() : createdAt);
+        SessionId.generateId(), CustomerId.parseId(customerId), token, expiresAt);
   }
 
   public boolean isExpired() {

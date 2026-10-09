@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 public class ChainTransactionEntity {
   @Id
-  @Column(name = "tx_id", nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID txId;
 
   @Column(name = "block_index", nullable = false)

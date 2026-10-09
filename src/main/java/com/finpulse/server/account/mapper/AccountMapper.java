@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountMapper {
   public Account toDomain(AccountRequest request) {
-    return Account.create(
+    return Account.createAccount(
         request.getCustomerId(),
         request.getAccountType(),
         request.getCurrency(),
@@ -18,20 +18,20 @@ public class AccountMapper {
   public void apply(AccountRequest request, Account account) {
     String status =
         request.getStatus() == null || request.getStatus().isBlank()
-            ? account.status()
+            ? account.getStatus().name()
             : request.getStatus();
-    account.update(
+    account.updateAccount(
         request.getCustomerId(), request.getAccountType(), request.getCurrency(), status);
   }
 
   public AccountResponse toResponse(Account account) {
     return AccountResponse.builder()
-        .accountId(account.accountId())
-        .customerId(account.customerId())
-        .accountType(account.accountType())
-        .currency(account.currency())
-        .status(account.status())
-        .openedAt(account.openedAt())
+        .accountId(account.getId().getValue())
+        .customerId(account.getCustomerId().getValue())
+        .accountType(account.getAccountType().name())
+        .currency(account.getCurrency().getCode())
+        .status(account.getStatus().name())
+        .openedAt(account.getOpenedAt())
         .build();
   }
 }

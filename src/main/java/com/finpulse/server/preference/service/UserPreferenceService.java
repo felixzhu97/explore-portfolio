@@ -1,5 +1,6 @@
 package com.finpulse.server.preference.service;
 
+import com.finpulse.server.preference.domain.model.PreferenceId;
 import com.finpulse.server.preference.domain.model.UserPreference;
 import com.finpulse.server.preference.domain.repository.UserPreferenceRepository;
 import com.finpulse.server.preference.dto.UserPreferenceRequest;
@@ -21,13 +22,15 @@ public class UserPreferenceService {
 
   @Transactional(readOnly = true)
   public List<UserPreference> list(int limit, int offset) {
-    return repository.findAllOrderedByUpdatedAt(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByUpdatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public UserPreference getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(PreferenceId.parseId(id))
         .orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User preference not found"));
   }
@@ -47,9 +50,10 @@ public class UserPreferenceService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    PreferenceId preferenceId = PreferenceId.parseId(id);
+    if (!repository.existsById(preferenceId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User preference not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(preferenceId);
   }
 }

@@ -1,53 +1,64 @@
 package com.finpulse.server.preference.domain.model;
 
-import java.time.Instant;
+import com.finpulse.server.common.domain.model.AbstractEntity;
+import com.finpulse.server.customer.domain.model.CustomerId;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
-/** User preference aggregate — framework-free domain model. */
+@Entity
+@DynamicUpdate
 @Getter
-@Accessors(fluent = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class UserPreference {
-  @NonNull private final UUID preferenceId;
-  @NonNull private UUID customerId;
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+public class UserPreference extends AbstractEntity<PreferenceId> {
+
+  @NotNull
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "customer_id", nullable = false))
+  private CustomerId customerId;
+
   private String theme;
+
   private String language;
+
   private boolean notificationsEnabled;
-  @NonNull private Instant updatedAt;
 
-  public static UserPreference create(
-      UUID customerId, String theme, String language, boolean notificationsEnabled) {
-    return new UserPreference(
-        UUID.randomUUID(), customerId, theme, language, notificationsEnabled, Instant.now());
-  }
-
-  public static UserPreference rehydrate(
-      UUID preferenceId,
-      UUID customerId,
+  private UserPreference(
+      PreferenceId id,
+      CustomerId customerId,
       String theme,
       String language,
-      boolean notificationsEnabled,
-      Instant updatedAt) {
-    return new UserPreference(
-        preferenceId,
-        customerId,
-        theme,
-        language,
-        notificationsEnabled,
-        updatedAt == null ? Instant.now() : updatedAt);
-  }
-
-  public void update(
-      @NonNull UUID customerId, String theme, String language, boolean notificationsEnabled) {
-    this.customerId = customerId;
+      boolean notificationsEnabled) {
+    super(id);
+    this.customerId = Objects.requireNonNull(customerId, "customerId cannot be null");
     this.theme = theme;
     this.language = language;
     this.notificationsEnabled = notificationsEnabled;
-    this.updatedAt = Instant.now();
+  }
+
+  public static UserPreference createPreference(
+      UUID customerId, String theme, String language, boolean notificationsEnabled) {
+    return new UserPreference(
+        PreferenceId.generateId(),
+        CustomerId.parseId(customerId),
+        theme,
+        language,
+        notificationsEnabled);
+  }
+
+  public void updatePreference(
+      UUID customerId, String theme, String language, boolean notificationsEnabled) {
+    this.customerId = CustomerId.parseId(customerId);
+    this.theme = theme;
+    this.language = language;
+    this.notificationsEnabled = notificationsEnabled;
   }
 }

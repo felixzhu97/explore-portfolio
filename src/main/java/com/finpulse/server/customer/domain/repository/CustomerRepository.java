@@ -1,18 +1,20 @@
 package com.finpulse.server.customer.domain.repository;
 
 import com.finpulse.server.customer.domain.model.Customer;
+import com.finpulse.server.customer.domain.model.CustomerId;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface CustomerRepository {
-  List<Customer> findAll(int limit, int offset);
+public interface CustomerRepository extends Repository<Customer, CustomerId> {
 
-  Optional<Customer> findById(UUID customerId);
+  List<Customer> findAllByOrderByCreatedAtDesc();
 
-  boolean existsById(UUID customerId);
+  Optional<Customer> findById(CustomerId id);
+
+  boolean existsById(CustomerId id);
 
   Customer save(Customer customer);
 
-  void deleteById(UUID customerId);
+  void deleteById(CustomerId id);
 }

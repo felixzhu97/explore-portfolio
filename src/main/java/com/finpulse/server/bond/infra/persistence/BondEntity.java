@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 public class BondEntity {
   @Id
-  @Column(name = "bond_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID bondId;
   @Column(name = "instrument_id", nullable = false)

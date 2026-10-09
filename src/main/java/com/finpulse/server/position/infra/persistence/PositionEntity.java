@@ -22,7 +22,7 @@ import lombok.Setter;
 @Builder
 public class PositionEntity {
   @Id
-  @Column(name = "position_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID positionId;
   @Column(name = "portfolio_id", nullable = false)

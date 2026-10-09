@@ -61,7 +61,7 @@ class CustomerAccountControllerTest {
                 .content(objectMapper.writeValueAsString(account)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.account_id").isNotEmpty())
-        .andExpect(jsonPath("$.status").value("active"));
+        .andExpect(jsonPath("$.status").value("ACTIVE"));
 
     mockMvc
         .perform(get("/api/v1/customers/" + customerId))

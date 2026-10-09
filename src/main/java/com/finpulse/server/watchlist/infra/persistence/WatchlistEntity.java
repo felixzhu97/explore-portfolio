@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 public class WatchlistEntity {
   @Id
-  @Column(name = "watchlist_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID watchlistId;
 

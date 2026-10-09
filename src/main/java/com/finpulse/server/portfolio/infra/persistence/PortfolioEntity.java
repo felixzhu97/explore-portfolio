@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder
 public class PortfolioEntity {
   @Id
-  @Column(name = "portfolio_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID portfolioId;
   @Column(name = "account_id", nullable = false)

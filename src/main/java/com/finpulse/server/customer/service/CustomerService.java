@@ -1,6 +1,7 @@
 package com.finpulse.server.customer.service;
 
 import com.finpulse.server.customer.domain.model.Customer;
+import com.finpulse.server.customer.domain.model.CustomerId;
 import com.finpulse.server.customer.domain.repository.CustomerRepository;
 import com.finpulse.server.customer.dto.CustomerRequest;
 import com.finpulse.server.customer.mapper.CustomerMapper;
@@ -21,13 +22,15 @@ public class CustomerService {
 
   @Transactional(readOnly = true)
   public List<Customer> list(int limit, int offset) {
-    return repository.findAll(limit, offset);
+    int size = limit <= 0 ? 100 : limit;
+    int start = Math.max(offset, 0);
+    return repository.findAllByOrderByCreatedAtDesc().stream().skip(start).limit(size).toList();
   }
 
   @Transactional(readOnly = true)
   public Customer getById(UUID id) {
     return repository
-        .findById(id)
+        .findById(CustomerId.parseId(id))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
   }
 
@@ -46,9 +49,10 @@ public class CustomerService {
   }
 
   public void delete(UUID id) {
-    if (!repository.existsById(id)) {
+    CustomerId customerId = CustomerId.parseId(id);
+    if (!repository.existsById(customerId)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found");
     }
-    repository.deleteById(id);
+    repository.deleteById(customerId);
   }
 }

@@ -1,18 +1,20 @@
 package com.finpulse.server.preference.domain.repository;
 
+import com.finpulse.server.preference.domain.model.PreferenceId;
 import com.finpulse.server.preference.domain.model.UserPreference;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import org.springframework.data.repository.Repository;
 
-public interface UserPreferenceRepository {
-  List<UserPreference> findAllOrderedByUpdatedAt(int limit, int offset);
+public interface UserPreferenceRepository extends Repository<UserPreference, PreferenceId> {
 
-  Optional<UserPreference> findById(UUID preferenceId);
+  List<UserPreference> findAllByOrderByUpdatedAtDesc();
 
-  boolean existsById(UUID preferenceId);
+  Optional<UserPreference> findById(PreferenceId id);
+
+  boolean existsById(PreferenceId id);
 
   UserPreference save(UserPreference preference);
 
-  void deleteById(UUID preferenceId);
+  void deleteById(PreferenceId id);
 }

@@ -22,7 +22,7 @@ import lombok.Setter;
 @Builder
 public class TradeEntity {
   @Id
-  @Column(name = "trade_id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
   private UUID tradeId;
   @Column(name = "order_id", nullable = false)
