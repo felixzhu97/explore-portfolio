@@ -187,7 +187,7 @@ See [`vercel.json`](vercel.json) for project-specific config.
 
 ## Contributing
 
-Issues and pull requests are welcome. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Prefer small, focused PRs with a clear why and test notes.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Prefer small, focused PRs with a clear why and test notes.
 
 ## Security
 
