@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="001-create-user-preference" author="finpulse">
+    <changeSet id="09cda360-1f39-5034-93e6-995b16885999" author="felix.zhu">
         <comment>user_preference final schema with typed id</comment>
         <createTable tableName="user_preference">
             <column name="id" type="uuid">
@@ -31,7 +31,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="002-create-customer-auth" author="finpulse">
+    <changeSet id="974c35f0-c134-5e6b-a80d-4e58afab32e8" author="felix.zhu">
         <comment>customer, user_credential, session final schema</comment>
         <createTable tableName="customer">
             <column name="id" type="uuid">
@@ -100,7 +100,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="003-create-account" author="finpulse">
+    <changeSet id="d041bcd1-da77-58fa-828c-bb3f1fcdde8d" author="felix.zhu">
         <comment>account final schema</comment>
         <createTable tableName="account">
             <column name="id" type="uuid">
@@ -136,7 +136,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="004-create-instrument-bond-option-market-data" author="finpulse">
+    <changeSet id="9556c66a-fcce-5503-84bf-769b5b638bec" author="felix.zhu">
         <comment>instrument, bond, option, market_data final schema</comment>
         <createTable tableName="instrument">
             <column name="id" type="uuid">
@@ -270,7 +270,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="005-create-watchlist" author="finpulse">
+    <changeSet id="aca3c383-b02c-50a3-9163-65cead5b38dc" author="felix.zhu">
         <comment>watchlist and watchlist_item final schema</comment>
         <createTable tableName="watchlist">
             <column name="id" type="uuid">
@@ -321,7 +321,7 @@
             constraintName="uk_watchlist_item_watchlist_instrument"/>
     </changeSet>
 
-    <changeSet id="006-create-trading-payments" author="finpulse">
+    <changeSet id="778f42b4-74fe-55e0-a246-21a4af449e88" author="felix.zhu">
         <comment>portfolio, position, orders, trade, cash_transaction, payment, settlement, realtime_quote</comment>
         <createTable tableName="portfolio">
             <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
