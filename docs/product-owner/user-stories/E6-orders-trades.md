@@ -4,7 +4,7 @@
 
 ## Background
 
-Users place orders and observe resulting trades.
+Orders place trades; fills appear as trade records for investors and ops.
 
 ---
 
@@ -12,7 +12,7 @@ Users place orders and observe resulting trades.
 
 **As an** investor  
 **I want** to create and view orders  
-**So that** I can trade instruments
+**So that** instrument trades are submitted and retrievable
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** investor or ops user  
 **I want** trades  
-**So that** fills are visible
+**So that** fills are listed with the documented fields
 
 ### Acceptance criteria
 

@@ -4,7 +4,7 @@
 
 ## Background
 
-Funding, payouts, cash transactions, and settlements complete the money lifecycle.
+Payments fund activity; settlements and cash transactions record post-trade money movement.
 
 ---
 
@@ -12,7 +12,7 @@ Funding, payouts, cash transactions, and settlements complete the money lifecycl
 
 **As an** investor  
 **I want** to submit payments  
-**So that** I can fund activity
+**So that** account funding is recorded
 
 ### Acceptance criteria
 

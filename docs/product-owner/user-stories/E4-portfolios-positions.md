@@ -4,7 +4,7 @@
 
 ## Background
 
-Investors need portfolios and positions to understand holdings and performance.
+Portfolios group holdings; positions record quantity per instrument.
 
 ---
 
@@ -12,7 +12,7 @@ Investors need portfolios and positions to understand holdings and performance.
 
 **As an** investor or ops user  
 **I want** portfolios  
-**So that** holdings are grouped meaningfully
+**So that** holdings are grouped by account or mandate
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** investor  
 **I want** positions in a portfolio  
-**So that** I can see quantity per instrument
+**So that** quantity per instrument is visible
 
 ### Acceptance criteria
 

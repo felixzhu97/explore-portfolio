@@ -4,7 +4,7 @@
 
 ## Background
 
-Fixed income and options extend the instrument model for richer portfolios.
+Bond and option resources extend the instrument model for fixed income and derivatives.
 
 ---
 
@@ -12,7 +12,7 @@ Fixed income and options extend the instrument model for richer portfolios.
 
 **As an** ops/investor user  
 **I want** bond resources  
-**So that** fixed-income holdings can be modeled
+**So that** fixed-income holdings link to instruments
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** ops/investor user  
 **I want** option resources  
-**So that** derivatives can be modeled
+**So that** option contracts persist per API contract
 
 ### Acceptance criteria
 

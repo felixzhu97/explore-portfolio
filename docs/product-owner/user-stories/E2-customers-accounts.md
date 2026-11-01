@@ -4,7 +4,7 @@
 
 ## Background
 
-Admin and portal need CRUD for Customer and Account as the foundation for portfolios and payments.
+Customer and Account CRUD underpins portfolios, payments, and admin workflows.
 
 ---
 
@@ -12,7 +12,7 @@ Admin and portal need CRUD for Customer and Account as the foundation for portfo
 
 **As an** advisor/ops user  
 **I want** to create and update customers  
-**So that** client records stay accurate
+**So that** client records stay accurate for portfolios and payments
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** advisor/ops user  
 **I want** to manage accounts for a customer  
-**So that** portfolios and cash can be attached
+**So that** portfolios and cash attach to the correct account
 
 ### Acceptance criteria
 

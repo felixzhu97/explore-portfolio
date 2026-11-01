@@ -4,7 +4,7 @@
 
 ## Background
 
-Trading and portfolios depend on a catalog of Instruments and related market data.
+Positions and orders reference an instrument catalog and stored market observations.
 
 ---
 
@@ -12,7 +12,7 @@ Trading and portfolios depend on a catalog of Instruments and related market dat
 
 **As a** user  
 **I want** instruments available via API  
-**So that** positions and orders reference real symbols
+**So that** positions and orders use stable symbols and ids
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** ops user  
 **I want** market-data CRUD  
-**So that** historical observations can be stored
+**So that** historical observations persist for analytics and quotes
 
 ### Acceptance criteria
 

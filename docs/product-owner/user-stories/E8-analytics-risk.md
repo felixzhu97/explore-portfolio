@@ -4,7 +4,7 @@
 
 ## Background
 
-Python analytics provide portfolio aggregates, risk metrics, forecasts, and behavior events.
+Python analytics expose portfolio aggregates, risk summaries, behavior events, and forecast hooks.
 
 ---
 
@@ -12,7 +12,7 @@ Python analytics provide portfolio aggregates, risk metrics, forecasts, and beha
 
 **As an** investor or admin  
 **I want** portfolio aggregates and risk summaries  
-**So that** I understand exposure
+**So that** exposure figures are available without ad-hoc SQL
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** admin  
 **I want** behavior events and forecast hooks  
-**So that** product analytics and ML demos work
+**So that** product analytics and model demos have stored inputs and outputs
 
 ### Acceptance criteria
 
