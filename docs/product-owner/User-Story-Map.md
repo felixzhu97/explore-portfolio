@@ -87,6 +87,15 @@ journey
 | [US-13](./user-stories/E6-orders-trades.md#us-13-trades) Trades | [US-15](./user-stories/E7-payments-settlements.md#us-15-settlements--cash) Settlements & cash | [US-17](./user-stories/E8-analytics-risk.md#us-17-behavior--forecast) Behavior & forecast | [US-19](./user-stories/E9-admin-portal-mobile.md#us-19-portal) Portal | [US-22](./user-stories/E10-bonds-options.md#us-22-options) Options | |
 | | | | [US-20](./user-stories/E9-admin-portal-mobile.md#us-20-mobile) Mobile | | |
 
+
+### Planned
+
+| Position & trade invariants |
+| --------------------------- |
+| [US-24](./user-stories/E12-position-trade-invariants.md#us-24-position-quantity-follows-fills) Position follows fills |
+| [US-25](./user-stories/E12-position-trade-invariants.md#us-25-glossary-clarifies-trade-position-settlement) Glossary timing & duty |
+| [US-26](./user-stories/E12-position-trade-invariants.md#us-26-domain-model-shows-position-adjustment-behavior) Domain model behavior |
+
 ## Epic index
 
 | Epic | File | Stories | Status |
@@ -102,6 +111,7 @@ journey
 | E9 Admin / portal / mobile | [E9-admin-portal-mobile.md](./user-stories/E9-admin-portal-mobile.md) | US-18 – US-20 | Done |
 | E10 Bonds & options | [E10-bonds-options.md](./user-stories/E10-bonds-options.md) | US-21 – US-22 | Done |
 | E11 Blockchain demo | [E11-blockchain-demo.md](./user-stories/E11-blockchain-demo.md) | US-23 | Done |
+| E12 Position & trade invariants | [E12-position-trade-invariants.md](./user-stories/E12-position-trade-invariants.md) | US-24 – US-26 | Planned |
 
 ## Related
 
