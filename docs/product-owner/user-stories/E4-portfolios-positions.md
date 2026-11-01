@@ -1,27 +1,45 @@
 # E4 — Portfolios & Positions
 
+← [User Story Map](../User-Story-Map.md)
+
 ## Background
 
 Investors need portfolios and positions to understand holdings and performance.
 
-## User Stories
+---
 
-### US-08 Portfolio CRUD
+## US-08 Portfolio CRUD
 
-**As an** investor or ops user, **I want** portfolios, **so that** holdings are grouped meaningfully.
+**As an** investor or ops user  
+**I want** portfolios  
+**So that** holdings are grouped meaningfully
 
-**Acceptance Criteria**
+### Acceptance criteria
 
-1. GIVEN an account/customer context  
-   WHEN portfolio CRUD is used  
-   THEN portfolios persist and are listable
+1. **Scenario** Portfolio CRUD  
+   **GIVEN** an account/customer context  
+   **WHEN** portfolio CRUD is used  
+   **THEN** portfolios persist and are listable
 
-### US-09 Positions
+### Status
 
-**As an** investor, **I want** positions in a portfolio, **so that** I can see quantity per instrument.
+Done
 
-**Acceptance Criteria**
+---
 
-1. GIVEN a portfolio and instrument  
-   WHEN position CRUD/batch is used  
-   THEN positions reflect quantity and instrument references
+## US-09 Positions
+
+**As an** investor  
+**I want** positions in a portfolio  
+**So that** I can see quantity per instrument
+
+### Acceptance criteria
+
+1. **Scenario** Position CRUD  
+   **GIVEN** a portfolio and instrument  
+   **WHEN** position CRUD/batch is used  
+   **THEN** positions reflect quantity and instrument references
+
+### Status
+
+Done
