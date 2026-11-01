@@ -4,7 +4,7 @@
 
 ## Background
 
-Investors follow symbols and need quotes (REST and streaming where available).
+Investors track symbols on watchlists and read quotes over REST or streaming where available.
 
 ---
 
@@ -12,7 +12,7 @@ Investors follow symbols and need quotes (REST and streaming where available).
 
 **As an** investor  
 **I want** watchlists and items  
-**So that** I can track symbols of interest
+**So that** followed symbols persist across sessions
 
 ### Acceptance criteria
 
@@ -31,7 +31,7 @@ Done
 
 **As an** investor  
 **I want** quotes for symbols  
-**So that** I see current prices
+**So that** current prices are available in portal and mobile
 
 ### Acceptance criteria
 

@@ -4,7 +4,7 @@
 
 ## Background
 
-FinPulse ships three clients that share the Java API entry and shared packages.
+Admin, portal, and mobile clients share the Java API entry and common packages.
 
 ---
 
@@ -12,13 +12,13 @@ FinPulse ships three clients that share the Java API entry and shared packages.
 
 **As an** ops user  
 **I want** an admin web app  
-**So that** I can manage clients, portfolios, and transactions
+**So that** customers, portfolios, and transactions can be managed in the browser
 
 ### Acceptance criteria
 
-1. **Scenario** Admin loads  
+1. **Scenario** Admin loads against API  
    **GIVEN** `pnpm dev:admin`  
-   **WHEN** I open the admin app pointed at :8801  
+   **WHEN** the admin app is pointed at :8801  
    **THEN** core management pages load against the API
 
 ### Status
@@ -31,13 +31,13 @@ Done
 
 **As an** investor  
 **I want** a portal web app  
-**So that** I can view portfolios and markets in the browser
+**So that** portfolios and markets are available in the browser
 
 ### Acceptance criteria
 
-1. **Scenario** Portal flows  
+1. **Scenario** Portal against seeded data  
    **GIVEN** `pnpm dev:portal`  
-   **WHEN** I use the portal against :8801  
+   **WHEN** the portal runs against :8801  
    **THEN** portfolio/market flows work for seeded data
 
 ### Status
@@ -50,13 +50,13 @@ Done
 
 **As an** investor  
 **I want** a mobile app  
-**So that** I can monitor portfolios on the go
+**So that** dashboard and watchlist data load on device
 
 ### Acceptance criteria
 
 1. **Scenario** Mobile dashboard  
    **GIVEN** Expo mobile with `EXPO_PUBLIC_API_BASE_URL`  
-   **WHEN** I open dashboard/watchlist  
+   **WHEN** dashboard/watchlist is opened  
    **THEN** data loads from the API entry
 
 ### Status

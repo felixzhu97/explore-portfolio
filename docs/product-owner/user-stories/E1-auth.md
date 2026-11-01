@@ -4,7 +4,7 @@
 
 ## Background
 
-Investors and operators need secure registration, login, and session management before using FinPulse surfaces.
+Registration, login, and session endpoints gate FinPulse portal, admin, and mobile.
 
 ---
 
@@ -12,7 +12,7 @@ Investors and operators need secure registration, login, and session management 
 
 **As a** guest  
 **I want** to register with email and password  
-**So that** I can access FinPulse
+**So that** a customer record exists for later login
 
 ### Acceptance criteria
 
@@ -21,7 +21,7 @@ Investors and operators need secure registration, login, and session management 
    **WHEN** `POST /api/v1/auth/register`  
    **THEN** the API returns token + customer and persists the user
 
-2. **Scenario** Duplicate email  
+2. **Scenario** Duplicate email rejected  
    **GIVEN** an existing email  
    **WHEN** register is attempted  
    **THEN** the API returns a client error without creating a second user
@@ -45,7 +45,7 @@ Done
    **WHEN** `POST /api/v1/auth/login`  
    **THEN** the API returns `{ token, customer }`
 
-2. **Scenario** Invalid credentials  
+2. **Scenario** Invalid credentials rejected  
    **GIVEN** invalid credentials  
    **WHEN** login is attempted  
    **THEN** the API rejects the request
@@ -60,7 +60,7 @@ Done
 
 **As a** signed-in user  
 **I want** `/auth/me`, logout, and change-password  
-**So that** I can manage my session
+**So that** the current session can be inspected or ended
 
 ### Acceptance criteria
 
