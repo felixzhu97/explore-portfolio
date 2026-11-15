@@ -1,4 +1,10 @@
-# FinPulse
+# explore-portfolio
+
+> **Moved.** Development continues in
+> [explore-workspace](https://github.com/felixzhu97/explore-workspace) under
+> `portfolio/`. This repository is archived; please open new issues and pull
+> requests there.
+
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
